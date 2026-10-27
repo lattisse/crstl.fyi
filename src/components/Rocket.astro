@@ -1,0 +1,163 @@
+---
+// src/components/Rocket.astro
+// Pixel rocket that lazily follows the cursor. Drop <Rocket /> into your layout.
+---
+
+<div class="rocket" id="rocket" aria-hidden="true">
+    <div class="turn" id="turn">
+        <svg viewBox="0 0 12 13" shape-rendering="crispEdges">
+            <!-- nose -->
+            <rect x="5" y="0" width="2" height="1" fill="#8a8a8a" />
+            <rect x="4" y="1" width="4" height="1" fill="#8a8a8a" />
+            <!-- body + shaded side -->
+            <rect x="4" y="2" width="4" height="6" fill="#ffffff" />
+            <rect x="7" y="2" width="1" height="6" fill="#c9c9c9" />
+            <!-- porthole -->
+            <rect x="5" y="3" width="2" height="2" fill="#5fa7ed" />
+            <!-- fins -->
+            <rect x="2" y="6" width="2" height="3" fill="#8a8a8a" />
+            <rect x="8" y="6" width="2" height="3" fill="#8a8a8a" />
+            <!-- nozzle -->
+            <rect x="5" y="8" width="2" height="1" fill="#4a4a4a" />
+            <!-- flame, two frames that swap -->
+            <g class="fa">
+                <rect x="5" y="9" width="2" height="2" fill="#8ae48a" />
+                <rect x="5" y="11" width="2" height="1" fill="#d6f7d6" />
+            </g>
+            <g class="fb">
+                <rect x="5" y="9" width="2" height="3" fill="#8ae48a" />
+                <rect x="5" y="12" width="2" height="1" fill="#d6f7d6" />
+            </g>
+        </svg>
+    </div>
+</div>
+
+<style>
+    .rocket {
+        --s: 2; /* pixel scale: 2 = 24px wide, 3 = 36px. Keep it a whole number so pixels stay crisp */
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 50;
+        width: calc(12px * var(--s));
+        height: calc(13px * var(--s));
+        margin: calc(-6.5px * var(--s)) 0 0 calc(-6px * var(--s)); /* centers the sprite on x,y */
+        pointer-events: none; /* never blocks clicks */
+        will-change: transform;
+    }
+    .turn {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s steps(3); /* choppy pixel-art turning */
+    }
+    svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        animation: bob 1.2s steps(2) infinite;
+    }
+    .fa,
+    .fb {
+        animation: flick 0.2s steps(1) infinite;
+    }
+    .fb {
+        animation-delay: -0.1s;
+    }
+    .rocket:not(.moving) .fa,
+    .rocket:not(.moving) .fb {
+        display: none; /* flame only while moving */
+    }
+    @keyframes bob {
+        50% {
+            transform: translateY(-2px);
+        }
+    }
+    @keyframes flick {
+        50% {
+            opacity: 0;
+        }
+    }
+    @media (hover: none) {
+        .rocket {
+            display: none;
+        } /* no cursor on touch screens */
+    }
+    @media (prefers-reduced-motion: reduce) {
+        svg,
+        .fa,
+        .fb {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    const rocket = document.getElementById("rocket");
+    const turn = document.getElementById("turn");
+
+    if (rocket && turn) {
+        const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const GAP = 60; // how far from the cursor it hangs back (px)
+        const EASE = 1.6; // lower = lazier
+
+        let x = innerWidth - 50;
+        let y = innerHeight - 70; // starts bottom-right
+        let mx = x;
+        let my = y;
+        let ang = 0;
+        let last = performance.now();
+
+        const place = () => {
+            rocket.style.transform = `translate(${x}px, ${y}px)`;
+        };
+        place();
+
+        if (!still) {
+            addEventListener(
+                "pointermove",
+                (e) => {
+                    mx = e.clientX;
+                    my = e.clientY;
+                },
+                { passive: true },
+            );
+
+            const loop = (now: number) => {
+                const dt = Math.min((now - last) / 1000, 0.05); // cap so tab-switching doesn't teleport it
+                last = now;
+
+                const dx = mx - x;
+                const dy = my - y;
+                const dist = Math.hypot(dx, dy);
+                let moving = false;
+
+                if (dist > GAP) {
+                    // move a fraction of the distance beyond GAP: fast when far, slow when close
+                    const step = (dist - GAP) * (1 - Math.exp(-dt * EASE));
+                    x += (dx / dist) * step;
+                    y += (dy / dist) * step;
+                    moving = step > 0.15;
+
+                    if (moving) {
+                        // art points up, so +90deg; snap to 45deg; take the short way round
+                        const snap =
+                            Math.round(
+                                ((Math.atan2(dy, dx) * 180) / Math.PI + 90) /
+                                    45,
+                            ) * 45;
+                        const diff = ((snap - ang + 540) % 360) - 180;
+                        if (diff) {
+                            ang += diff;
+                            turn.style.transform = `rotate(${ang}deg)`;
+                        }
+                    }
+                }
+
+                rocket.classList.toggle("moving", moving);
+                place();
+                requestAnimationFrame(loop);
+            };
+            requestAnimationFrame(loop);
+        }
+    }
+</script>

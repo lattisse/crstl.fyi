@@ -8,7 +8,7 @@ export async function GET() {
     title: "Crystal's Blog",
     description:
       "Linux, coding, physics, and the universe. Mostly random stuff I find cool or want to experiment with.",
-    site: "https://crstl.me",
+    site: "https://crstl.fyi",
     items: posts
       .sort((a, b) => b.data.pubDate - a.data.pubDate)
       .map((post) => ({

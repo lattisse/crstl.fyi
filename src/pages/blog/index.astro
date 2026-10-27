@@ -12,20 +12,14 @@ const posts = (await getCollection("blog")).sort(
 >
     <h1>blog</h1>
     <ul>
-        {
-            posts.map((post) => (
-                <li>
-                    <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                    <span style="color:#ccc; margin-left: 1rem; font-size: 0.9em;">
-                        {
-                            new Date(post.data.pubDate)
-                                .toISOString()
-                                .split("T")[0]
-                        }
-                    </span>
-                </li>
-            ))
-        }
+        {posts.map((post) => (
+            <li>
+                <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                <span style="color:#ccc; margin-left: 1rem; font-size: 0.9em;">
+                    {new Date(post.data.pubDate).toISOString().split("T")[0]}
+                </span>
+            </li>
+        ))}
     </ul>
 </Layout>
 
