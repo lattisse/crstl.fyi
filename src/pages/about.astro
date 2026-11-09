@@ -1,8 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { SITE } from "../lib/site";
+import {
+    aboutPageSchema,
+    jsonLdGraph,
+    personSchema,
+} from "../lib/structured-data";
 ---
 
-<Layout title="about">
+<Layout
+    title="about"
+    description={SITE.aboutDescription}
+    jsonLd={jsonLdGraph(aboutPageSchema(), personSchema())}
+>
     <h1>about</h1>
     <p>
         Hi, I am Crystal (he/him). I am in senior high school and live in Nepal.
@@ -22,7 +32,7 @@ import Layout from "../layouts/Layout.astro";
         Wuthering Waves, ETS 2, and NieR: Automata. I also got into aim training
         and have been playing KovaaK's, mostly Viscose's Benchmark. I am on
         Steam at
-        <a href="https://steamcommunity.com/id/lattisse/" target="_blank">
+        <a href={SITE.steam} target="_blank" rel="me noopener noreferrer">
             lattisse
         </a>
         .

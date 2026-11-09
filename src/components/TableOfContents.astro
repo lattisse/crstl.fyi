@@ -1,0 +1,70 @@
+---
+interface Heading {
+    depth: number;
+    slug: string;
+    text: string;
+}
+
+interface Props {
+    headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const visibleHeadings = headings.filter(
+    (heading) => heading.depth >= 2 && heading.depth <= 4,
+);
+---
+
+{visibleHeadings.length > 0 && (
+    <nav class="toc" aria-labelledby="toc-heading">
+        <h2 id="toc-heading">contents</h2>
+        <ol>
+            {visibleHeadings.map((heading) => (
+                <li class={`depth-${heading.depth}`}>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+            ))}
+        </ol>
+    </nav>
+)}
+
+<style>
+    .toc {
+        border: 1px solid #333;
+        border-radius: 4px;
+        padding: 1rem 1.25rem;
+        margin: 0 0 2.5rem;
+        background-color: #181818;
+    }
+
+    .toc h2 {
+        font-size: 1.1em;
+        margin: 0 0 0.75rem;
+    }
+
+    .toc ol {
+        margin: 0;
+        padding-left: 1.2em;
+    }
+
+    .toc li {
+        margin-bottom: 0.25rem;
+    }
+
+    .toc a {
+        color: #ccc;
+    }
+
+    .toc a:hover {
+        color: #66b3ff;
+        text-decoration: underline;
+    }
+
+    .toc .depth-3 {
+        margin-left: 1rem;
+    }
+
+    .toc .depth-4 {
+        margin-left: 2rem;
+    }
+</style>

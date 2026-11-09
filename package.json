@@ -1,17 +1,28 @@
 {
   "name": "crstl",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Personal site of Crystal (crstl) — programming, homelabbing, Linux, physics, rockets, and space.",
+  "homepage": "https://crstl.fyi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lattisse/crstl.fyi.git"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "check": "astro check",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^8.1.1",
+    "@astrojs/mdx": "^8.1.3",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.4.2"
+    "astro": "^7.4.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^6.0.3"
   }
 }

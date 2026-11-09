@@ -4,74 +4,73 @@ import Github from "../assets/icons/github.svg";
 import Email from "../assets/icons/envelope-at-fill.svg";
 import Discord from "../assets/icons/discord.svg";
 import Rocket from "../components/Rocket.astro";
-import { getCollection } from "astro:content";
-const posts = (await getCollection("blog"))
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-    .slice(0, 2);
+import PostList from "../components/PostList.astro";
+import { SITE } from "../lib/site";
+import { getSortedPosts } from "../lib/posts";
+import {
+    jsonLdGraph,
+    personSchema,
+    websiteSchema,
+} from "../lib/structured-data";
+
+const posts = (await getSortedPosts()).slice(0, 2);
 ---
 
-<Layout>
-    <h1>lattisse</h1>
+<Layout jsonLd={jsonLdGraph(websiteSchema(), personSchema())}>
+    <h1>crstl</h1>
     <p>
         Hi! I'm Crystal. I do a bit of programming, some homelabbing, and play a
         lot of games. Right now, I'm learning C++, drawing, and 3D modeling. I
         like physics, rockets, and space.
     </p>
-    <p>
-        Currently reading <span>A Short History of Nearly Everything</span>
-    </p>
-    <h3>recent posts</h3>
-    <ul>
-        {posts.map((post) => (
-            <li class="blinks">
-                <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                <span style="color:#ccc; margin-left: 1rem; font-size: 0.9em;">
-                    {new Date(post.data.pubDate).toISOString().split("T")[0]}
-                </span>
-            </li>
-        ))}
-    </ul>
-    <h3>links</h3>
-    <ul>
+    <h2 class="section-title">recent posts</h2>
+    <PostList posts={posts} />
+    <p class="all-posts"><a href="/blog/">all posts →</a></p>
+    <h2 class="section-title">links</h2>
+    <ul class="links">
         <li>
             <Discord />
             <a
-                href="https://discord.com/users/541270973375184906"
+                href={SITE.discord}
                 target="_blank"
+                rel="noopener noreferrer"
             >
                 @lattisse
             </a>
         </li>
         <li>
             <Github />
-            <a href="https://github.com/lattisse" target="_blank">
+            <a href={SITE.github} target="_blank" rel="noopener noreferrer">
                 lattisse
             </a>
         </li>
         <li>
             <Email />
-            <a href="mailto:crystaaaal@proton.me" target="_blank">
-                crystaaaal@proton.me
-            </a>
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
         </li>
     </ul>
     <Rocket />
 </Layout>
 
 <style>
-    li {
-        list-style: none;
-        margin: 0;
+    .section-title {
+        font-size: 1.5em;
     }
 
-    ul {
+    .all-posts {
+        margin-top: -1rem;
+        font-size: 0.9em;
+    }
+
+    .links {
         padding: 0;
     }
 
-    .blinks a {
-        color: inherit;
-    }
-    .blinks a:hover {
-        text-decoration: underline;
+    .links li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        list-style: none;
+        margin: 0 0 0.5rem;
     }
 </style>

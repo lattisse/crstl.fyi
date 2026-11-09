@@ -97,6 +97,7 @@
 
     if (rocket && turn) {
         const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const noHover = matchMedia("(hover: none)").matches;
         const GAP = 60; // how far from the cursor it hangs back (px)
         const EASE = 1.6; // lower = lazier
 
@@ -112,7 +113,7 @@
         };
         place();
 
-        if (!still) {
+        if (!still && !noHover) {
             addEventListener(
                 "pointermove",
                 (e) => {

@@ -1,43 +1,31 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getCollection } from "astro:content";
-const posts = (await getCollection("blog")).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+import PostList from "../../components/PostList.astro";
+import Footer from "../../components/Footer.astro";
+import { getSortedPosts } from "../../lib/posts";
+import { SITE } from "../../lib/site";
+import { blogSchema, jsonLdGraph } from "../../lib/structured-data";
+
+const posts = await getSortedPosts();
 ---
 
 <Layout
     title="blog"
-    description="Linux, coding, physics, and the universe. Mostly random stuff I find cool or want to experiment with."
+    description={SITE.blogDescription}
+    jsonLd={jsonLdGraph(blogSchema())}
 >
     <h1>blog</h1>
-    <ul>
-        {posts.map((post) => (
-            <li>
-                <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                <span style="color:#ccc; margin-left: 1rem; font-size: 0.9em;">
-                    {new Date(post.data.pubDate).toISOString().split("T")[0]}
-                </span>
-            </li>
-        ))}
-    </ul>
+    <p class="feed-link">
+        <a href="/rss.xml">RSS</a>
+    </p>
+    <PostList posts={posts} showDescription />
+    <Footer />
 </Layout>
 
 <style>
-    a {
-        color: inherit;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    li {
-        list-style: none;
-        margin: 0;
-    }
-
-    ul {
-        padding: 0;
+    .feed-link {
+        color: #ccc;
+        font-size: 0.9em;
+        margin-top: -1rem;
     }
 </style>

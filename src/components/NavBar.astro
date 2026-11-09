@@ -1,31 +1,45 @@
 ---
 const path = Astro.url.pathname;
+const links = [
+    { href: "/", label: "home" },
+    { href: "/blog/", label: "blog" },
+    { href: "/about/", label: "about" },
+];
+
+const isActive = (href: string) =>
+    href === "/" ? path === "/" : path.startsWith(href);
 ---
 
-<nav role="navigation">
+<nav aria-label="Main navigation">
     <ul class="nav">
-        <li>
-            <a href="/">home</a>
-        </li>
-
-        <li>
-            <a href="/blog/">blog</a>
-        </li>
-
-        <li>
-            <a href="/about/">about</a>
-        </li>
+        {links.map((link) => (
+            <li>
+                <a
+                    href={link.href}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                >
+                    {link.label}
+                </a>
+            </li>
+        ))}
     </ul>
 </nav>
 
 <style>
     .nav {
         display: flex;
+        flex-wrap: wrap;
         justify-content: flex-end;
         margin-top: 1rem;
         margin-bottom: 1rem;
         gap: 1.5rem;
         list-style: none;
         padding: 0;
+    }
+
+    .nav a[aria-current="page"] {
+        color: #ffffff;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
     }
 </style>

@@ -28,8 +28,14 @@
     font-display: swap;
 }
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html {
     font-size: 62.5%;
+    color-scheme: dark;
+    scrollbar-gutter: stable;
     font-family:
         "Atkinson",
         -apple-system,
@@ -47,10 +53,32 @@ body {
     line-height: 1.618;
     max-width: 48em;
     width: 80%;
+    min-height: 100vh;
     margin: auto;
     color: #ffffff;
     background-color: #121212;
     padding: 13px;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background-color: #ffffff;
+    color: #121212;
+    padding: 0.5rem 1rem;
+}
+
+.skip-link:focus {
+    left: 1rem;
+    top: 1rem;
 }
 
 @media (max-width: 684px) {
@@ -85,9 +113,8 @@ h6 {
     margin-top: 3rem;
     margin-bottom: 1.5rem;
     overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-all;
-    word-break: break-word;
+    word-break: normal;
+    scroll-margin-top: 1rem;
 }
 
 h1 {
@@ -126,17 +153,25 @@ sup {
 }
 
 hr {
-    border-color: #ffffff;
+    border: 0;
+    border-top: 1px solid #4a4a4a;
 }
 
 a {
     text-decoration: none;
     color: #66b3ff;
     overflow-wrap: anywhere;
+    text-underline-offset: 0.15em;
 }
 
 a:hover {
     color: #4da6ff;
+    text-decoration: underline;
+}
+
+:focus-visible {
+    outline: 2px solid #66b3ff;
+    outline-offset: 2px;
 }
 
 ul {
@@ -182,6 +217,7 @@ pre {
     margin-top: 0px;
     margin-bottom: 2.5rem;
     font-size: 0.9em;
+    border-radius: 4px;
 }
 
 code,
@@ -191,6 +227,7 @@ samp {
     padding: 0 0.5em;
     background-color: #4a4a4a;
     white-space: pre-wrap;
+    border-radius: 4px;
 }
 
 pre > code {
@@ -202,7 +239,7 @@ pre > code {
 
 /* Tables */
 table {
-    text-align: justify;
+    text-align: left;
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 2rem;
@@ -307,8 +344,13 @@ fieldset {
     font-weight: 600;
 }
 
-span {
-    color: lightgreen;
+.accent {
+    color: #90ee90;
+}
+
+::selection {
+    background-color: #66b3ff;
+    color: #121212;
 }
 
 /* Chrome / Edge / Safari */

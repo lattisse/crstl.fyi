@@ -1,9 +1,24 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getCollection, render } from "astro:content";
+import TableOfContents from "../../components/TableOfContents.astro";
+import PostNav from "../../components/PostNav.astro";
+import Footer from "../../components/Footer.astro";
+import { render } from "astro:content";
+import {
+    formatDate,
+    getAdjacentPosts,
+    getSortedPosts,
+    readingTime,
+} from "../../lib/posts";
+import { SITE } from "../../lib/site";
+import {
+    blogPostingSchema,
+    breadcrumbSchema,
+    jsonLdGraph,
+} from "../../lib/structured-data";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("blog");
+    const posts = await getSortedPosts();
 
     return posts.map((post) => ({
         params: {
@@ -14,15 +29,97 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const posts = await getSortedPosts();
+const { newer, older } = getAdjacentPosts(posts, post);
+const siteURL = Astro.site ?? new URL(SITE.url);
+const canonicalURL = new URL(`/blog/${post.id}/`, siteURL).href;
 ---
 
-<Layout title={post.data.title} description={post.data.description}>
-    <h2 style="margin-bottom: 0px;">{post.data.title}</h2>
-    <p style="color: #ccc; font-size: 0.9em;">
-        {new Date(post.data.pubDate).toISOString().split("T")[0]}
-    </p>
+<Layout
+    title={post.data.title}
+    description={post.data.description}
+    type="article"
+    publishedTime={post.data.pubDate}
+    modifiedTime={post.data.updatedDate}
+    jsonLd={jsonLdGraph(
+        blogPostingSchema(post, canonicalURL),
+        breadcrumbSchema([
+            { name: "home", url: "/" },
+            { name: "blog", url: "/blog/" },
+            { name: post.data.title, url: `/blog/${post.id}/` },
+        ]),
+    )}
+>
     <article>
+        <h1>{post.data.title}</h1>
+        <p class="post-meta">
+            by {SITE.author}
+            <span aria-hidden="true"> · </span>
+            <time datetime={post.data.pubDate.toISOString()}>
+                {formatDate(post.data.pubDate)}
+            </time>
+            <span aria-hidden="true"> · </span>
+            {readingTime(post.body)} min read
+        </p>
+        {
+            post.data.updatedDate && (
+                <p class="post-meta">
+                    updated{" "}
+                    <time datetime={post.data.updatedDate.toISOString()}>
+                        {formatDate(post.data.updatedDate)}
+                    </time>
+                </p>
+            )
+        }
+        {
+            post.data.tags.length > 0 && (
+                <ul class="tags" aria-label="Tags">
+                    {post.data.tags.map((tag) => (
+                        <li>{tag}</li>
+                    ))}
+                </ul>
+            )
+        }
+        <TableOfContents headings={headings} />
         <Content />
     </article>
+    <PostNav newer={newer} older={older} />
+    <p class="back-link"><a href="/blog/">← back to blog</a></p>
+    <Footer />
 </Layout>
+
+<style>
+    h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    .post-meta {
+        color: #ccc;
+        font-size: 0.9em;
+        margin-bottom: 0.5rem;
+    }
+
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0;
+        margin: 0 0 2rem;
+    }
+
+    .tags li {
+        list-style: none;
+        margin: 0;
+        border: 1px solid #333;
+        border-radius: 999px;
+        padding: 0.1rem 0.6rem;
+        color: #ccc;
+        font-size: 0.75em;
+    }
+
+    .back-link {
+        margin-top: 2rem;
+        font-size: 0.9em;
+    }
+</style>

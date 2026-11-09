@@ -2,8 +2,19 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="404 – Page Not Found">
+<Layout
+    title="404"
+    description="This page doesn't exist. Maybe it drifted off into space."
+    noindex
+>
     <h1>404</h1>
     <p>This page doesn’t exist. Maybe it drifted off into space.</p>
-    <a href="/" style="font-size: 1.5em; font-weight:bold;"> Return home </a>
+    <a class="return-home" href="/">Return home</a>
 </Layout>
+
+<style>
+    .return-home {
+        font-size: 1.5em;
+        font-weight: 700;
+    }
+</style>

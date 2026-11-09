@@ -1,0 +1,70 @@
+---
+import type { BlogPost } from "../lib/posts";
+import { formatDate, readingTime } from "../lib/posts";
+
+interface Props {
+    posts: BlogPost[];
+    showDescription?: boolean;
+}
+
+const { posts, showDescription = false } = Astro.props;
+---
+
+<ul class="post-list">
+    {posts.map((post) => (
+        <li>
+            <div class="post-heading">
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <span class="post-meta">
+                    <time datetime={post.data.pubDate.toISOString()}>
+                        {formatDate(post.data.pubDate)}
+                    </time>
+                    <span aria-hidden="true"> · </span>
+                    {readingTime(post.body)} min read
+                </span>
+            </div>
+            {showDescription && post.data.description && (
+                <p class="post-description">{post.data.description}</p>
+            )}
+        </li>
+    ))}
+</ul>
+
+<style>
+    .post-list {
+        padding: 0;
+        margin: 0;
+    }
+
+    .post-list li {
+        list-style: none;
+        margin: 0 0 1.2rem;
+    }
+
+    .post-heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.25rem 1rem;
+    }
+
+    .post-heading a {
+        color: inherit;
+    }
+
+    .post-heading a:hover {
+        text-decoration: underline;
+    }
+
+    .post-meta {
+        color: #ccc;
+        font-size: 0.9em;
+        white-space: nowrap;
+    }
+
+    .post-description {
+        color: #ccc;
+        font-size: 0.95em;
+        margin: 0.25rem 0 0;
+    }
+</style>

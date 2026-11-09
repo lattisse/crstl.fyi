@@ -1,0 +1,77 @@
+---
+import type { BlogPost } from "../lib/posts";
+
+interface Props {
+    newer?: BlogPost;
+    older?: BlogPost;
+}
+
+const { newer, older } = Astro.props;
+---
+
+{(newer || older) && (
+    <nav class="post-nav" aria-label="Post navigation">
+        {newer && (
+            <a class="newer" href={`/blog/${newer.id}/`}>
+                <span class="label">← newer post</span>
+                <span class="title">{newer.data.title}</span>
+            </a>
+        )}
+        {older && (
+            <a class="older" href={`/blog/${older.id}/`}>
+                <span class="label">older post →</span>
+                <span class="title">{older.data.title}</span>
+            </a>
+        )}
+    </nav>
+)}
+
+<style>
+    .post-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 3rem 0 0;
+        padding-top: 1.5rem;
+        border-top: 1px solid #333;
+    }
+
+    .post-nav a {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        color: inherit;
+        border: 1px solid #333;
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+    }
+
+    .post-nav a:hover {
+        border-color: #66b3ff;
+    }
+
+    .post-nav .older {
+        text-align: right;
+    }
+
+    .post-nav .label {
+        color: #ccc;
+        font-size: 0.8em;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .post-nav .title {
+        font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+        .post-nav {
+            grid-template-columns: 1fr;
+        }
+
+        .post-nav .older {
+            text-align: left;
+        }
+    }
+</style>

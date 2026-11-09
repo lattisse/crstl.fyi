@@ -1,18 +1,33 @@
 ---
 import Head from "../components/Head.astro";
 import Navbar from "../components/NavBar.astro";
+import StructuredData from "../components/StructuredData.astro";
 
-const { title, description } = Astro.props;
+interface Props {
+    title?: string;
+    description?: string;
+    image?: string;
+    imageAlt?: string;
+    type?: "website" | "article" | "profile";
+    noindex?: boolean;
+    publishedTime?: Date;
+    modifiedTime?: Date;
+    jsonLd?: Record<string, unknown>;
+}
+
+const { jsonLd, ...headProps } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
-        <Head title={title} description={description} />
+        <Head {...headProps} />
+        {jsonLd && <StructuredData data={jsonLd} />}
     </head>
     <body>
+        <a class="skip-link" href="#main">Skip to content</a>
         <Navbar />
-        <main>
+        <main id="main">
             <slot />
         </main>
     </body>
