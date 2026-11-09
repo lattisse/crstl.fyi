@@ -6,7 +6,7 @@ export const SITE = {
     blogDescription:
         "Linux, coding, physics, and the universe. Mostly random stuff I find cool or want to experiment with.",
     aboutDescription:
-        "About Crystal — a high school student in Nepal interested in programming, homelabbing, Linux, physics, rockets, and space.",
+        "A human interested in programming, homelabbing, linux, physics, rockets, and space.",
     author: "Crystal",
     url: "https://crstl.fyi",
     ogImage: "/og.png",

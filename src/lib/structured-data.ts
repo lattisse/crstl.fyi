@@ -16,7 +16,7 @@ export function personSchema() {
         url: SITE.url,
         sameAs: [SITE.github, SITE.steam],
         description:
-            "Crystal is a high school student in Nepal interested in programming, homelabbing, Linux, physics, rockets, and space.",
+            "Crystal is a human interested in programming, homelabbing, linux, physics, rockets, and space.",
         knowsAbout: [
             "Programming",
             "Linux",
