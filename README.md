@@ -1,6 +1,6 @@
 # crstl.fyi
 
-Personal site of Crystal — programming, homelabbing, Linux, physics, rockets, and space.
+a minimal personal site of mine that is updated once in the blue moon. the readme below is AI generated but it should help if someone for whatever reason likes this site.
 
 Built with [Astro](https://astro.build), MDX, and the official RSS and sitemap integrations.
 
